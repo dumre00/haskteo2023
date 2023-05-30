@@ -1,0 +1,62 @@
+Aplicacio parcial (cuando pasas como varibale una funcion)
+----------------------------
+addAndMul:: Doube->Double->Double
+1) addAndMul a b c = a*x+b
+2) addAndMul=\a b x->a*x*+b
+            =\a->\b->x->a*x+b
+
+EXAMPLE
+------------
+addAndMul 3 5=(addAndMul 3)5=\x->3*x+5
+
+---------------------
+segona versio de pdf 2
+---------------------
+-Us de fruncions de 2, ordre predefinides
+-Tipus més generals
+
+data calcInst= CalcEnter Double | calcBin (Double->Double->Double) | calc(Double->Double)
+
+////////
+parseLine= parseWords(words s)
+parseWords::[String]->[calcInst]
+parseWords[]=[]
+parsewords("+":ws)=CalcBin(+): parseWords ws
+
+////////
+parseWord:: String->CalcInstr
+---------------------
+map::(a->b)->[a]->[b]
+map f []=[]
+map f (x:xs)=  f(x): map f xs 
+                (b)   [b]
+
+
+-----------
+parseWords ws=map parseWords ws
+              a->str  str->calcInst  Str
+              b->calcInst
+(String->CalcInstr)->[String]->[CalcInstr]
+
+parseWord:: String->CalcInstr
+parseWord "+"=calcBin(+)
+        .
+        .
+        .
+parseWord "neg"=calcUn negate
+parseWord "inv"=calcUn(\x->1/x)
+                        ---aqui podriamos poner seccion
+parseWord "inc"=calc(1+)
+parseWord "dec"=calc(1-)
+parseWord "dec"=calc(1-)
+-----------------------------
+#SECCIONS
+(OP):: a->a->a
+(expressio operador):: a->a
+(e op)= \x->e op x
+        (op)e
+(op e)= \x-> x op e
+      = (flip(op)) e
+
+
+

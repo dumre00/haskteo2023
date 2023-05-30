@@ -1,0 +1,113 @@
+POLIMORFISME AMB SOBRECARRGE
+        #CLASES DE Tipus
+        -CONCEPTES
+        -DEFINICIONS
+------
+id []:[]
+id(x:xs)=x:xs
+id::[a]->[a] --aquest es el constructor més general
+
+---en el exemple d'altre dia
+addAndMul a b x= a*x+b
+--de quin tipus sert addMul?, per sber aixo, mirem que es fa operacions de sumar i multipliar, 
+--pero no podem fer aquestas operacions amb string 
+--en haskell la clase Num engloba aquesta operacio
+addAndMul:: (Num t) =>t->t->t->t
+          --(Num t) --restriccions(constants)= restriccions de t, t ha de ser tipus Num
+
+--altre exemple
+
+elem x[]=False
+elem x (y:ys)=if x==y then True
+              else elem x ys
+
+--la definicio general sera 
+elem:: (Eq a)=>a->[a]->Bool
+        (Eq a) --restriccions(constants)= restriccions de a, a ha de ser tipus Eq
+
+--altre exemple
+showDiv x y= if y==0 then "Divisor de 0"
+                else show (x/y)
+
+showDiv:: (Eq a, Fractional a, Show a)=> a->a->String
+
+----recordatori
+(==)::(Eq a)=>a->a->Bool
+(/)::(Num a)=>a->a->a
+show::(show a)=a->String
+
+-----------------------------------------
+-DEFINICIONS
+
+·clase Eq
+ --Com esta definida la case Eq?
+        --te 2 funcions i una implementacion per defecte 
+class Eq a where
+        (==)::a->a->Bool
+        (/=)::a->a->Bool
+        x/=y=not(x==y) --implementacions per defecte
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+·clase show
+--la clase Show?
+class Show a where
+        showPrec::Int->a->String->String
+        show::a->String
+        showList::[a]->String->String
+
+--exemple
+shows:: (Show a)=> a->String->Strung
+show x(show "es"(show y))
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+·clase Num
+--com esta definida la clase Num?
+--la divisio no esta inclosa perque pertany a un altre clase
+class Num a where
+        (+)::a->a->a
+        (-)::a->a->a
+        (*)::a->a->a
+        negate::a->a
+        abs::a->a
+        fromInteger::Integer->a
+
+el zero  Int i Double a la vegada = es polimorfic
+0::Num a=>a
+0=fromInteger A --representacio dels literals enters
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+·clase Num
+class Num a=>Fractional a where  --herencia(?), la clase Fractional pertany la clase Num
+        (/)::a->a->a
+        fromRational::Rational->a
+
+--exemple
+1.0::Fractional a=>a
+
+--exemple
+f x y = if x==y then x+y --se compara per tant, es clase Eq, i se suma per tant clase num
+        else x/y   --se divide per tant es clase Fracctional
+f::(Eq a, Fractional a)=> a->a->a
+
+--perque 2 es enter literal, i la clase Fractional ya implica clase nu, 
+        2::Num a=>a
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+·clase Eq a=> ord a where
+        (>)::a->a->Bool
+        (<)::a->a->Bool
+        (>=)::a->a->Bool
+        (<=)::a->a->Bool
+        max::a->a->a
+        min::a->a->a
+        .
+        .
+        .
+
+--exemple
+f x y = 
+        if x>y then x+y --se compara per tant, es clase Eq, i se suma per tant clase num
+        else if x==y then 1 
+        else 0 
+f::(Ord a, Num a)=>a->a->a

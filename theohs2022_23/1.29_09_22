@@ -1,0 +1,96 @@
+
+-- No existe el tipo String, todo son listas de carácteres
+data Figura = Circle Point Double | Rectangle Point Point
+
+data Maybe a = Nothing | Just a
+stringPos :: String ->Char->Maybe Int
+stringPos [] _ = Nothing
+stringPos(x:xs) c = 
+    if x ==c then Just 0
+    else case stringPos xs c of
+        Nothing -> Nothing -- Puedo devolver Nothing pq es un contructor de Maybe, línea 4
+        Just i = Just (i+1) -- Construccio de Maybe's, expressió
+--Patrons↗                 ↖ Devuelvo la posicion i+1 pq la lista xs también empiexa por 0
+
+{- recorrer listas en Haskell
+POSICION: 0     1
+        x
+        xs0   xs1 ...
+
+***PARÉNTESIS:: ASOCIATIVOS POR LA DERECHA -> IMPORTANCIA EN SI PONER PARÉNTESIS O NO
+TIPOS DE SINTAXIS EPECIALES::
+
+Tipus       |   Constructores           |       Exemples d'expressions              |         Syntactic Sugar
+[a]             []::[a]                         2:3:5:[]*^1                                   [2,3,5]
+                (:)::a->[a]->[a]    
+(a,b)           (,)::a->b->(a,b)                (,)2 "Hello" ::(Int, String)                  (2,"Hello")
+(a,b,c)         (,,)::a->b->c->(a,b,c)          (,,)2 "Hello" True::(Int,String,Bool)         (2,"Hello", True)
+()              ()::()
+ ↖Tupla 0 elements
+
+
+*^1-->Es po lo mismo que 2:(3:(5:[])), los paréntesi no hacen falta pq hay asociacion por la derecha
+-}
+
+--NOTACIÓ INFIX --> el operador va entre medio de los operandos, en general se requieren paréntesi
+--exemple: (3+5)*(7+2*3)
+--NOTACIÓ POSTFIX --> expressar primero los operandos y luego el operador, 
+-- ** Cada operación se hace con los 2 valores directamente anteriores
+--exemple: 3 5 + 7 2 3 * + *
+--                      ↖los signos operan con los 2 valores anteriores, entonces es PRIMERO 2*3 y luego será 7 6 +, y ahí se suma 
+
+
+module Calc where data CalcInstr = CalcEnter Double
+                                    |CalcAdd | CalcSub | CalcMul | CalcDiv | CalcNeg | CalcInv
+type CalcStack = [Double]
+calcInit::CalcStack
+calcInit::[CalcInstr]->CalcStack->CalcStack
+calcSolve1::CalcInstr->CalcStack->CalcStack
+calcTop::CalcStack->Double
+-- *^3
+
+module Main where
+import Calc
+main::IO()
+main=do
+    s<-getLine --en los métodos "do", a la izq de la flecha se pone una accion y a la derecha el resultado de dicha accion 
+--   ↖String  ↖IO String
+    let is=parseLine s --"is" es la lista de isntrucciones, no is del verbo en inglés
+                        -- En la construccion "let" el tipo de las variables si que es el de la accion, no como en getLine
+--        ↖Llista d'instruccions ↖(parseLine)Llista d'instruccions
+-- parseLine::String->[CalcInstr]*^2
+        r=calcTop(calcSolve is calcInt) --Con el calcTop obtendo el valor de arriba de todo del Stack, que es el resutlado
+--      ↖Double↖Double
+    putStrLn(show r)
+
+
+-- *^2
+parseLine::String->[CalcInstr]
+parseLine s= parseWords(words s)
+parseWords:: `[String] -> [calcInstr]
+-- Miro la forma que tiene la lista
+--Lista vacía
+parseWords [] = []
+--Lista CON el signo de suma: primero hago la suma y por recursividad las siguientes instrucciones serán las que haya en el String
+parseWords ("+":ws) = CalcAdd : parseWords ws
+
+parseWords("-":ws) = CalcSub : parseWords ws
+parseWords("neg":ws) = CalcNeg:parseWords ws
+...
+-- si el primer elemento de la lista es un número
+parseWords(w:ws)=CalcEnter(read w):parseWords ws
+
+{-
+read::String->Double
+show::Double->String
+gotLine::IO String
+putStrLn:: String->IO() -->Escribe la línea que se pasa como argunto en la consola + salto de línea
+head::[a]->a
+-}
+
+-- *^3
+calcTop[x]=x
+calcSolve::[CalcInstr]->CalcStack->CalcStack
+--Miramos cómo es la lista
+calcSolve[] xs=xs -- > Pq no tenog ninguna expresion a aplicar
+calcSolve(i:is) xs = CalcSolve is(CalcSolve i xs)

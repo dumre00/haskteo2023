@@ -1,0 +1,53 @@
+-----------hoja 4.1
+let r_err= case parseline s of
+        just is-> case calcSolve is CalcInit of
+            just xs-> CalcTop xs 
+            
+            Nothing->Nothing
+        .
+        .
+        Nothing->Nothing
+
+
+class Functor m=> Monad m where
+    return:: a->m a --no es una funcion q retorna,no es el return de c, java
+    (>>=):: m a->(a->mb)->mb -- 1er monat, funcio q dona resultat en resultat en funcio del 2n monat
+    (>>):: m a ->mb -> mb
+    m1>>m2 =m1 >>=(\_->m2)
+
+instance Monad Maybe where ---els monads son estrutura algebraica.
+
+    return x= Just x
+    Just x>>= f = f x-- ejemplo del codigo linia 14
+    Nothing>>= f= Nothing
+
+
+let r_err=
+    parseline s>>=
+        \ is -> (CalcSolve is CalcInt>>=
+            \xs-> CalcTop xs)
+    -- aquesta funcio equivalent a al funcio calTop
+
+
+instance Monad IO where
+    return x=............
+    (>>=)=...............
+
+--sintaxis do  es sintactic sugar
+    do
+        p<-m1
+        secuencias...
+    
+    =
+
+    m1>>= 
+        \p->do secuencias --- >>=composicio, la funcio depen del monad, \p depen de m1
+------------------------------------------
+--ara no hi ha dependencia
+
+    do 
+        m1
+            secuencias
+    =
+    m1>>do
+        secuencias

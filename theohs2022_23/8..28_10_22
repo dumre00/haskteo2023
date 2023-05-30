@@ -1,0 +1,49 @@
+Programacion funcional en Haskell
+    Tecnologias de la WEB
+
+API de Programacion d'aplicacions WEB en Haskell:
+Web Application Interface (WAI)
+
+modul Network.Wai: type Application = Request ->(Response->IO ResponseReceived)-> IO ResponseReceived
+--previament, en versions anteriors,
+type Application = Request -> IO Response
+----------------------------
+http://hostname:port/path......
+port=(opcional, 80 per defecto)
+
+peticio: path, mètode (GET,POST,...)
+capçaleres
+content
+
+
+resposta:
+    codi d'estat (1xx,2xxx,3xx,4xx,5xx)
+    capçaleres
+    contingut
+
+--------------------
+
+modul Network_wai.Handler.Warp
+run::Port -> Application-> IO()
+runEnv::Port -> Application-> IO()
+
+Esquema simplificat d'un servidor
+run port app= do 
+    --obre port tcp,(Listen)
+    te un bucle on 
+        accepta connexio
+        reb preticio
+        req<-
+        resp<- app req SendResp
+        //tanca connexio
+
+SendResp resp =do
+    //envia resposta
+----------------------------------
+
+type Application = Request -> IO Response
+app req respond =do
+ --procesa preticio req
+    resp <- ..........
+    respond resp
+

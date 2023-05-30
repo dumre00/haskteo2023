@@ -1,0 +1,223 @@
+15/09/2022
+HASKELL
+
+ lenguaje de programación puramente funcional.
+
+    -(no le damos una ordena, sino una pauta).
+    -no puedes reasignar variables.
+
+    - Es un lenguaje perezoso
+    HASKELL es:
+·Programacion funcional
+
+·Funciones puras:
+    - no changes!
+    - no efectos laterales! 
+    - llamar a la misma funcion con los mismos argumentos da siempre el mismo resultado (DETERMINISMO)
+
+· Tipus estatics: 
+  // javaScript- 
+            var x= "aixo es un text";
+            var y= 5;
+            var z= x+y;  (string y numero)
+
+  -Haskell:
+        x :: Int (declarar el tipo)            [opcional]  
+        (no hace falta especificar el tipo de variable) 
+        x=5
+
+Estructura de un programacion
+ modulo= conjunto de funciones, tipos.
+    Ex: 
+        module NomDelModul (...nom de les declaracions que s'exporten) 
+        el import Perlude esta implicit
+
+        import NomDelModulImportat 1 (subconjunt)
+        //import qualified Data.Map
+        //import Data.List hiding (nub)
+        //import qualified Data.Map as M
+            --para utilixar una funcion concreta de Data.Map hare M.funcion
+
+        __Declaracion__
+        · podemos declarar variables i funciones globales
+                nom:: expresion de tipus
+                funcion==expresion de valor
+                --El operador de igualdad == es una función. También lo son +, -, *, / y casi todos los operadores. Si el nombre de una función está compuesta solo por caracteres especiales (no alfanuméricos), es considerada una función infija por defecto. Si queremos examinar su tipo, pasarla a otra función o llamarla en forma prefija debemos rodearla con paréntesis. Por ejemplo: (+) 1 4 equivale a 1 + 4.
+
+        · de nous tipus de dades
+            type.....
+            data....
+            newtype...
+
+        · clase de tipus
+            class....
+            instance...
+
+            (<>):: String -> String ->String
+            S1<> S2=...
+            (<>)"Hello" "World"
+
+            f::(Int->Int->Int)->Int->Int
+            (+):: Int->Int->Int 
+            (es una funcion int que coge int y devuelve int)
+
+
+como hariamos un main en haskell?
+    main::()->()
+    main _ = ...
+    --getLine::()->String    ---el scanf del c
+    --putStrln::String->()
+    --read::String->Int
+    --show::Int-> String
+    --div::Int->Int->Int
+
+
+vamos a intentar hacer un la division
+     showdiv::Int->Int->String
+     showDiv x y=
+      if y==0 then "divisor es 0"
+        else show (div x y)
+    
+    main::()->()
+    main()=
+        let x=getNum()
+            y=getNum()
+----------------------------------------------------------------------------------------------
+
+22/09/2022
+*EXPRESION Y TIPUS
+    ·Declaracions de variables
+    let <definición> in <expreson>.
+
+        let x= expressio
+            y= expressio y
+
+        in expressio
+
+        EXEMPLE
+        let
+            f x y z = x*y+z
+        in f 3 5 7 
+            >3*5+7
+            >22
+
+        let 
+            x=2+1
+            f y = y*y
+        in f x  
+            >x*x(on x=2+1)  
+            >3*3  
+        //(2*1)*(2*1)= let x=2*1
+                       in x*x 
+
+    *FUNCIONS ANONIMAS
+        (f=\ x y -> expressio )= (f x y =expressio)
+
+            EXEMPLE     
+            applyTwice byTwo 5= (\x->2*x)((\x->2*x)*5)
+                                2*((\x->2*x)*5)
+                                2*(2*5)
+                                2*10
+                                20
+
+    *Expresions 'Case'
+        esZero x= case x of 
+                0->True
+                _ ->False
+        esZero :: Int ->Bool // pasas un entero y te devuelve boolea
+        not:: Bool -> Bool// pasas bool y te devuelve bool
+
+
+        descibe x y = case x>y of  
+                        True -> "es major"
+                        False -> "es menor"
+                                   (=)
+        describe x y -= if x>y 
+                        then "es major"
+                        else "es menor"
+
+    *Recusividad
+    --------------------------------------------------------------------------------------
+    23-09-2022
+
+    *Polimorfisme
+        id x=x
+        
+        si no defino nada
+         //id:: int->int  (si no hago esto)  
+
+        id:: a->a el compildaor lo interpreta como tipus
+
+        ---polimorfisme
+        id "hello"---- id es string
+        id 2------ id es int
+
+
+
+        operadors especials 
+        (f·g)x=f(g·x) --el punt
+        f$x= f x      --el dolar
+
+
+        const1:: a-(b->a)
+        const2::x=\y->x
+        const3 :: a->Int
+
+
+    *Definicions de tipus  
+        ·Alias de tipus 
+            __ String = [char]
+            type String = [char]
+                 
+                 Exe1:
+                    type Velocity=Double
+                    type Position= Double
+                    type Time = Double
+
+                    newPosition:: Position->Velocity->Time->Position
+
+                Exe2:
+                    ·definicio de tipus de dades algebraiques (ADTs)
+
+                    data Bool= False | True       --els noms en majuscula
+                    data Color = Red | Green | Blue
+
+                    data Maybe a= Nothing| Just a
+
+
+    *Tipus amb sintaxis especials   
+        #Tuplas
+            TIPUS               CONSTRUCTORS
+            (a,b)               (x,y):: (a,b)
+            (a,b,c)             (x,y,z):: (a,b,c)
+            .
+            .
+            .
+        #Listas
+            TIPUS               CONSTRUCTORS
+            [a]                     []::[a]
+            lenght:: [a]->Int
+            lenght[]=0
+            lenght (x:xs)=1+lenght xs
+            
+
+
+
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

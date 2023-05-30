@@ -1,0 +1,131 @@
+CLASS MONAD (intro)
+
+class Applicative m=> Monad m where
+    return :: a-> m a
+    return =pure
+
+
+class Functor=> Applicative m where
+    pure:: a-> m a --la funcio pure esta definit, construiex el funtor que no aporta cap afecte
+    (<*>):: m(a->b)-> m a -> m b -- segon monad es parametre, 2 monats dependents
+    (>>=)::  m a-> (a->m b)-> m b -- segon monad es el resultat del priemr
+    (>>)::  m a-> m b-> m b
+    liftA 2:: (a->b->c)-> m a-> m b-> m c -- combina els 2 functors i  produeix un resultat que es combinacio dels 2 .
+    (*>):: m a -> m b -> m b
+    (*>):: m a -> m b -> m a
+
+    (>>)=(*>)
+
+    m1<*> m2 = liftA2 id m1 m2
+    id= (a->b)->(a->b)
+    m1= m(a->b)
+    m2= m a
+
+    liftA2 f m1 m2 = fmap f m1 <*> m2
+
+
+    instance Applicative Maybe where
+        pure= Just
+
+        --si un dels monads fallan
+        Nothing <*> _ = Nothing --nothing =abortar
+        - <*> Nothing= Nothing
+
+        Just f <*> Just x = Just (f x)
+
+
+Monad "Reader"
+data(Reader e)a =.....
+ask:: Reader e e
+ask :: (e -> a) -> Reader e a
+runReader :: Reader e a -> e-> a
+
+EXEMPLE D'APPLICACIÓ
+data config=....
+
+//funcions sobre config
+config1:: config -> Bool
+config2: config -> String
+
+app: Reader config String
+app = do
+    x<- part1
+    y<- part2 x
+    part3 x y
+
+part1:: Reader config T1
+part1= do
+    b<- asks config1
+    ....
+    ...
+
+part2:: T1-> Reader config T2
+part2 x = do
+    s<- asks config2
+
+part3:: T1 -> T2 -> Reader config String
+part3 x y = do
+    ...
+    ...
+
+main = do
+    cfg<- getconfig
+    let s = runReader app cfg
+    printStrLn s
+
+----implentacion de MONAD READER
+
+data Reader e a = ReaderC(e-> a)
+runReader:: Reader e a -> e -> a
+runReader (ReaderC f)= f e
+instance Functor (Reader e) where
+    fmap f m =  ReaderC (\e->f(runReader m e))--mapejar f en m 
+
+instance Applicative (Reader e) where
+    pure x= Reader (\e->x) = (\_ -> x) --_ vol dir parametre que ignorem
+    mf <*> mx = ReaderC $ \e ->
+        let f = runReader mf e
+            x = runRead mx e
+            --este monad transfiere los efectos
+        in f x
+        =
+        runReader mf e (runReader mx e)
+
+instance Monad (Reader e) where
+    return = pure
+    mx>>= f = ReaderC $ \e ->
+        let x = runReader mx e
+        my = f x
+        in runReader my e
+    -- mx>>= f= obte segon monad en funcio del primer, my es un monad en funcio de x
+
+    asks:: (e->a)-> Reader e a
+    asks = ReaderC
+    --------------------------
+    ask:: Reader e e
+    ask= asks id 
+
+--resum
+la clase aplicative conte functors
+els functors tipus i/O = interracio
+ tipus Maybe= depen d'un parametre 
+ tipus Reader = te 2 parametres, (Reader e) e = (Reader e) es el monad, e es altre parametre
+tipus (Either a ) b
+
+
+---------------------
+dema
+Monad "sate"
+
+data state s a =..........
+
+get :: State s s
+gets:: (s->a)-> state s a
+
+put::s-> state s()
+
+runState
+
+
+
+

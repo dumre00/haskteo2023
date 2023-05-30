@@ -1,0 +1,104 @@
+Exemple Aplicacio:
+
+data Game=....
+
+paly:: Action -> State Game T
+play actgion = do
+go <- get
+--modificacio l'estat a partir de Action
+let g = funcio de go ;
+put g...
+
+
+-----------------------------
+data State s a = satte c (s->(a,s))
+instance Functor (State s) where
+    fmap f (stateC t)= stateC $ \s0 -> -- s0 sera l'estat inicial
+    let (x,s1)= t s0
+    in (f x, s1)
+
+
+runState (stateC t)= t 
+runState :: State s a ->(s->(a,s))
+
+
+-- Tipus de  (<*>) en aquesta instancia:
+--  state s(a->b)-> State s a-> State s b
+instance Applicative (State s) where 
+    pure x= stateC $\ s0 --s0 estat previ
+    \s0->(x,s0)   -- esta linia va arriba
+    mf <*> mx = StateC $ \ s0->
+        let (f, s1)= runState my s0
+                (x,s2)= runState mx s1
+        in (f x, s2)
+
+
+data State s a = satte c (s->(a,s))
+instance Monad (State s) where
+    mx>>== k= stateC$\ s0->
+        let (x,s1)=runstate mx s0
+        my = k x
+        in runState my s1
+
+gets::(s->a)-> State s a 
+gets f =stateC $\ s0->(f s0, s0)
+
+get :: State s s 
+get :: StateC $ \ s0-> (s0,s0)
+--o tambe
+get = gets id --aixo es mes elegant
+
+
+put :: s-> State s ()
+put s1 = StateC $ \ s0 -> ((),s1)
+
+--mondas interesants
+Maybe, Ether, IO, header, Sate, Writer (permet mantenir un valor de sortida)
+
+
+///////////////////////////////////////////////////////////////////////
+data writer w a =.....
+-- la
+clase Monoid m where
+    mempty::m  --element buit/neutre dels monoids
+    mappend: m->m->m --combinacio dels monoids
+
+runWriter:: Writer w a -> (a, w)
+runWriter(WriterC p)=p
+
+instance Functor mx = WriterC $
+    let (x, w1)= runWriter mx
+    in (f x, w1)
+
+instance Applicative (Writer w) where
+    pure x= Writerc (x,mempty)
+    mf <*> mx = Writer $
+        let (f, w1)= runWriter mf
+        let (x, w2)= runWriter mx
+        in (f x, mappend w1 w2)
+
+instance MOnad w => Monad (Writer w) where
+    mx>>= k= WriterC $
+    let (x, w1) = runWriter mx
+    my = k x
+    (y, w2)= runWriter my
+    in (y, mappend w1 w2)
+
+
+data StateT S m a = State2c(s->m(a,s))
+--Statet s m  dona com resultat una altre monat
+
+instance Monad m => Functor (StateT s m) where 
+    fmap f mx = stateTC $ \s0 -> do  --como es monadica, puedo utilizar sintaxis do
+        (x, s1)<-runState mx s0 - -- (a,s)<- m(a,s)
+        pure (f x, s1)
+
+
+instance Monad m => Applicative (State s m) where -- monad m = qualsevol monad
+    pure x= StateTC $ \ -> pure (x, s0)
+    mf <*> mx = stateTC $ \ s0 -> do
+        (f,s1)<- runStateT mf s0
+        (x, s2)<- runstate mx s1
+        pure (f x, s2)
+
+
